@@ -35,6 +35,20 @@ export interface IStorage {
   updateProjectApplicationStatus(id: number, status: string): Promise<ProjectApplication | undefined>;
 }
 
+/* Database storage implementation to be used later
+export class DatabaseStorage implements IStorage {
+  constructor() {}
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  // Other methods...
+}
+*/
+
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private projects: Map<number, Project>;
@@ -231,4 +245,6 @@ export class MemStorage implements IStorage {
   }
 }
 
+// We're transitioning from MemStorage to DatabaseStorage
+// For now, use MemStorage until we finish the database migration
 export const storage = new MemStorage();
