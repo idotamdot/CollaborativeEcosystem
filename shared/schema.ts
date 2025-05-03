@@ -207,10 +207,33 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Project participation agreements
+export const agreements = pgTable("agreements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  projectId: integer("project_id").notNull(),
+  role: text("role").notNull(),
+  hoursCommitted: integer("hours_committed").notNull(),
+  contractText: text("contract_text").notNull(),
+  signedOn: timestamp("signed_on").defaultNow(),
+  ipAddress: text("ip_address"),
+  status: text("status").notNull().default("active"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertFeedbackSchema = createInsertSchema(feedback).pick({
   userId: true,
   projectId: true,
   feedbackText: true,
+});
+
+export const insertAgreementSchema = createInsertSchema(agreements).pick({
+  userId: true,
+  projectId: true,
+  role: true,
+  hoursCommitted: true,
+  contractText: true,
+  ipAddress: true,
 });
 
 export type ProjectApplication = typeof projectApplications.$inferSelect;
@@ -228,6 +251,9 @@ export type InsertResource = z.infer<typeof insertResourceSchema>;
 export type Feedback = typeof feedback.$inferSelect;
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
 
+export type Agreement = typeof agreements.$inferSelect;
+export type InsertAgreement = z.infer<typeof insertAgreementSchema>;
+
 // Define relationships between tables
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects, { relationName: "userProjects" }),
@@ -237,6 +263,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   investments: many(investors, { relationName: "userInvestments" }),
   contributions: many(contributions, { relationName: "userContributions" }),
   feedbacks: many(feedback, { relationName: "userFeedbacks" }),
+  agreements: many(agreements, { relationName: "userAgreements" }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -249,6 +276,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   investments: many(investors, { relationName: "projectInvestments" }),
   contributions: many(contributions, { relationName: "projectContributions" }),
   feedbacks: many(feedback, { relationName: "projectFeedbacks" }),
+  agreements: many(agreements, { relationName: "projectAgreements" }),
 }));
 
 export const projectApplicationsRelations = relations(projectApplications, ({ one }) => ({
@@ -313,5 +341,18 @@ export const feedbackRelations = relations(feedback, ({ one }) => ({
     fields: [feedback.projectId],
     references: [projects.id],
     relationName: "projectFeedbacks"
+  }),
+}));
+
+export const agreementsRelations = relations(agreements, ({ one }) => ({
+  user: one(users, {
+    fields: [agreements.userId],
+    references: [users.id],
+    relationName: "userAgreements"
+  }),
+  project: one(projects, {
+    fields: [agreements.projectId],
+    references: [projects.id],
+    relationName: "projectAgreements"
   }),
 }));

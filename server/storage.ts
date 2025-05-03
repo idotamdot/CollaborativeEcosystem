@@ -6,7 +6,8 @@ import {
   investors, type Investor, type InsertInvestor,
   contributions, type Contribution, type InsertContribution,
   resources, type Resource, type InsertResource,
-  feedback, type Feedback, type InsertFeedback
+  feedback, type Feedback, type InsertFeedback,
+  agreements, type Agreement, type InsertAgreement
 } from "@shared/schema";
 import { DatabaseStorage } from "./database-storage";
 
@@ -65,6 +66,13 @@ export interface IStorage {
   getFeedbackByUser(userId: number): Promise<Feedback[]>;
   getFeedbackByProject(projectId: number): Promise<Feedback[]>;
   createFeedback(feedback: InsertFeedback): Promise<Feedback>;
+  
+  // Agreement methods
+  getAgreement(id: number): Promise<Agreement | undefined>;
+  getAgreementsByUser(userId: number): Promise<Agreement[]>;
+  getAgreementsByProject(projectId: number): Promise<Agreement[]>;
+  createAgreement(agreement: InsertAgreement): Promise<Agreement>;
+  updateAgreementStatus(id: number, status: string): Promise<Agreement | undefined>;
 }
 
 /* Keeping this for reference but we're now using DatabaseStorage
