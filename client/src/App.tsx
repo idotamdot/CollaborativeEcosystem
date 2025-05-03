@@ -16,6 +16,8 @@ import SteewardshipModel from "@/pages/SteewardshipModel";
 import Resources from "@/pages/Resources";
 import HowItWorks from "@/pages/HowItWorks";
 import PrintableForms from "@/pages/PrintableForms";
+import TimesheetTracker from "@/pages/TimesheetTracker";
+import EcoDictionary from "@/pages/EcoDictionary";
 
 // Placeholder component for pages still under development
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -80,6 +82,10 @@ function Router() {
               <Route path="/printable/forms" component={PrintableForms} />
               <Route path="/printable/legal" component={PrintableForms} />
               <Route path="/printable/workbooks" component={PrintableForms} />
+              
+              {/* Business Tools section */}
+              <Route path="/timesheet" component={TimesheetTracker} />
+              <Route path="/dictionary" component={EcoDictionary} />
               
               {/* About section */}
               <Route path="/mission">

@@ -13,7 +13,11 @@ import {
   ChevronRight,
   ChevronDown,
   Menu,
-  X
+  X,
+  Clock,
+  Calendar,
+  Car,
+  Book
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -68,6 +72,17 @@ const sidebarItems: SidebarItemType[] = [
     title: 'Stewardship Model',
     path: '/stewardship-model',
     icon: <Leaf className="h-5 w-5" />,
+  },
+  {
+    title: 'Business Tools',
+    path: '/timesheet',
+    icon: <Clock className="h-5 w-5" />,
+    submenu: [
+      { title: 'Timesheet Tracker', path: '/timesheet' },
+      { title: 'Eco Dictionary', path: '/dictionary' },
+      { title: 'Tax Reporting', path: '/timesheet?tab=tax' },
+      { title: 'Weekly Reports', path: '/timesheet?tab=reports' },
+    ],
   },
   {
     title: 'Printable Resources',
