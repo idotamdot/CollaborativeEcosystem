@@ -79,7 +79,9 @@ const sidebarItems: SidebarItemType[] = [
     icon: <Clock className="h-5 w-5" />,
     submenu: [
       { title: 'Timesheet Tracker', path: '/timesheet' },
+      { title: 'Task Automation', path: '/task-automation' },
       { title: 'Eco Dictionary', path: '/dictionary' },
+      { title: 'Legal Templates', path: '/legal-templates' },
       { title: 'Tax Reporting', path: '/timesheet?tab=tax' },
       { title: 'Weekly Reports', path: '/timesheet?tab=reports' },
     ],

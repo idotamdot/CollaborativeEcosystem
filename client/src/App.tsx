@@ -18,6 +18,8 @@ import HowItWorks from "@/pages/HowItWorks";
 import PrintableForms from "@/pages/PrintableForms";
 import TimesheetTracker from "@/pages/TimesheetTracker";
 import EcoDictionary from "@/pages/EcoDictionary";
+import LegalTemplates from "@/pages/LegalTemplates";
+import TaskAutomation from "@/pages/TaskAutomation";
 
 // Placeholder component for pages still under development
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -86,6 +88,8 @@ function Router() {
               {/* Business Tools section */}
               <Route path="/timesheet" component={TimesheetTracker} />
               <Route path="/dictionary" component={EcoDictionary} />
+              <Route path="/legal-templates" component={LegalTemplates} />
+              <Route path="/task-automation" component={TaskAutomation} />
               
               {/* About section */}
               <Route path="/mission">
