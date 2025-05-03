@@ -6,7 +6,8 @@ import {
   insertProjectSchema, 
   insertMessageSchema, 
   insertProjectApplicationSchema,
-  insertResourceSchema
+  insertResourceSchema,
+  insertAgreementSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -472,6 +473,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(resources);
     } catch (error) {
       res.status(500).json({ message: "Error fetching resources by type" });
+    }
+  });
+
+  // ===== Participation Agreement Routes =====
+  
+  // Get agreement by ID
+  app.get("/api/agreements/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid agreement ID" });
+      }
+      
+      const agreement = await storage.getAgreement(id);
+      if (!agreement) {
+        return res.status(404).json({ message: "Agreement not found" });
+      }
+      
+      res.json(agreement);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching agreement" });
+    }
+  });
+  
+  // Get agreements by user
+  app.get("/api/users/:id/agreements", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const agreements = await storage.getAgreementsByUser(userId);
+      res.json(agreements);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching user agreements" });
+    }
+  });
+  
+  // Get agreements by project
+  app.get("/api/projects/:id/agreements", async (req: Request, res: Response) => {
+    try {
+      const projectId = parseInt(req.params.id);
+      if (isNaN(projectId)) {
+        return res.status(400).json({ message: "Invalid project ID" });
+      }
+      
+      const agreements = await storage.getAgreementsByProject(projectId);
+      res.json(agreements);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching project agreements" });
+    }
+  });
+  
+  // Create agreement (sign participation agreement)
+  app.post("/api/agreements", async (req: Request, res: Response) => {
+    try {
+      const agreementData = insertAgreementSchema.parse(req.body);
+      
+      // Get IP address for signature verification
+      const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      const agreementWithIp = {
+        ...agreementData,
+        ipAddress: ipAddress as string
+      };
+      
+      const newAgreement = await storage.createAgreement(agreementWithIp);
+      res.status(201).json(newAgreement);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid agreement data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating agreement" });
+    }
+  });
+  
+  // Update agreement status (e.g., to inactive if someone leaves)
+  app.put("/api/agreements/:id/status", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid agreement ID" });
+      }
+      
+      const { status } = req.body;
+      if (!status || typeof status !== 'string') {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      
+      const updatedAgreement = await storage.updateAgreementStatus(id, status);
+      if (!updatedAgreement) {
+        return res.status(404).json({ message: "Agreement not found" });
+      }
+      
+      res.json(updatedAgreement);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating agreement status" });
     }
   });
 

@@ -6,7 +6,8 @@ import {
   investors, type Investor, type InsertInvestor,
   contributions, type Contribution, type InsertContribution,
   resources, type Resource, type InsertResource,
-  feedback as feedbackTable, type Feedback, type InsertFeedback
+  feedback as feedbackTable, type Feedback, type InsertFeedback,
+  agreements, type Agreement, type InsertAgreement
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
@@ -331,5 +332,45 @@ export class DatabaseStorage implements IStorage {
       .values(insertFeedback)
       .returning();
     return feedbackEntry;
+  }
+
+  // Agreement methods
+  async getAgreement(id: number): Promise<Agreement | undefined> {
+    const [agreement] = await db
+      .select()
+      .from(agreements)
+      .where(eq(agreements.id, id));
+    return agreement;
+  }
+  
+  async getAgreementsByUser(userId: number): Promise<Agreement[]> {
+    return await db
+      .select()
+      .from(agreements)
+      .where(eq(agreements.userId, userId));
+  }
+  
+  async getAgreementsByProject(projectId: number): Promise<Agreement[]> {
+    return await db
+      .select()
+      .from(agreements)
+      .where(eq(agreements.projectId, projectId));
+  }
+  
+  async createAgreement(insertAgreement: InsertAgreement): Promise<Agreement> {
+    const [agreement] = await db
+      .insert(agreements)
+      .values(insertAgreement)
+      .returning();
+    return agreement;
+  }
+  
+  async updateAgreementStatus(id: number, status: string): Promise<Agreement | undefined> {
+    const [agreement] = await db
+      .update(agreements)
+      .set({ status })
+      .where(eq(agreements.id, id))
+      .returning();
+    return agreement;
   }
 }
