@@ -93,150 +93,152 @@ const Projects = () => {
   );
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex justify-between items-start mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-neutral-900">Collaborative Projects</h1>
-          <p className="mt-2 text-lg text-neutral-700">
-            Discover and join ecological business ventures seeking collaborators
-          </p>
-        </div>
-        <Button className="bg-primary hover:bg-primary-dark">
-          <PlusCircle className="mr-2 h-4 w-4" /> Create Project
-        </Button>
-      </div>
-      
-      <div className="flex flex-col md:flex-row gap-6 mb-8">
-        <div className="w-full md:w-64 flex-shrink-0">
-          <Card>
-            <CardHeader className="py-4">
-              <CardTitle className="text-lg">Filter Projects</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-neutral-500" />
-                <Input
-                  placeholder="Search projects..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              
-              <div className="mt-4">
-                <h3 className="font-medium mb-2">Categories</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <input type="checkbox" id="agriculture" className="rounded text-primary" />
-                    <label htmlFor="agriculture" className="ml-2 text-sm">Agriculture & Food</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="energy" className="rounded text-primary" />
-                    <label htmlFor="energy" className="ml-2 text-sm">Renewable Energy</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="technology" className="rounded text-primary" />
-                    <label htmlFor="technology" className="ml-2 text-sm">Sustainable Technology</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="manufacturing" className="rounded text-primary" />
-                    <label htmlFor="manufacturing" className="ml-2 text-sm">Eco Manufacturing</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="services" className="rounded text-primary" />
-                    <label htmlFor="services" className="ml-2 text-sm">Community Services</label>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <h3 className="font-medium mb-2">Skills Needed</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <input type="checkbox" id="marketing" className="rounded text-primary" />
-                    <label htmlFor="marketing" className="ml-2 text-sm">Marketing</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="development" className="rounded text-primary" />
-                    <label htmlFor="development" className="ml-2 text-sm">Development</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="design" className="rounded text-primary" />
-                    <label htmlFor="design" className="ml-2 text-sm">Design</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="finance" className="rounded text-primary" />
-                    <label htmlFor="finance" className="ml-2 text-sm">Finance</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="legal" className="rounded text-primary" />
-                    <label htmlFor="legal" className="ml-2 text-sm">Legal</label>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="bg-gradient-to-r from-primary to-primary-dark min-h-screen py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Collaborative Projects</h1>
+            <p className="mt-2 text-lg text-white/90">
+              Discover and join ecological business ventures seeking collaborators
+            </p>
+          </div>
+          <Button className="bg-white text-primary hover:bg-white/90">
+            <PlusCircle className="mr-2 h-4 w-4" /> Create Project
+          </Button>
         </div>
         
-        <div className="flex-1">
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="all">All Projects</TabsTrigger>
-              <TabsTrigger value="recommended">Recommended for You</TabsTrigger>
-              <TabsTrigger value="newest">Newest</TabsTrigger>
-              <TabsTrigger value="popular">Most Popular</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="all">
-              {isLoading ? (
+        <div className="flex flex-col md:flex-row gap-6 mb-8">
+          <div className="w-full md:w-64 flex-shrink-0">
+            <Card className="bg-white/90 backdrop-blur-sm shadow-lg">
+              <CardHeader className="py-4">
+                <CardTitle className="text-lg text-primary">Filter Projects</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-neutral-500" />
+                  <Input
+                    placeholder="Search projects..."
+                    className="pl-8 border-primary/20 focus:border-primary"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                
+                <div className="mt-4">
+                  <h3 className="font-medium mb-2 text-primary/80">Categories</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <input type="checkbox" id="agriculture" className="rounded text-primary" />
+                      <label htmlFor="agriculture" className="ml-2 text-sm">Agriculture & Food</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="energy" className="rounded text-primary" />
+                      <label htmlFor="energy" className="ml-2 text-sm">Renewable Energy</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="technology" className="rounded text-primary" />
+                      <label htmlFor="technology" className="ml-2 text-sm">Sustainable Technology</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="manufacturing" className="rounded text-primary" />
+                      <label htmlFor="manufacturing" className="ml-2 text-sm">Eco Manufacturing</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="services" className="rounded text-primary" />
+                      <label htmlFor="services" className="ml-2 text-sm">Community Services</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4">
+                  <h3 className="font-medium mb-2 text-primary/80">Skills Needed</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <input type="checkbox" id="marketing" className="rounded text-primary" />
+                      <label htmlFor="marketing" className="ml-2 text-sm">Marketing</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="development" className="rounded text-primary" />
+                      <label htmlFor="development" className="ml-2 text-sm">Development</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="design" className="rounded text-primary" />
+                      <label htmlFor="design" className="ml-2 text-sm">Design</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="finance" className="rounded text-primary" />
+                      <label htmlFor="finance" className="ml-2 text-sm">Finance</label>
+                    </div>
+                    <div className="flex items-center">
+                      <input type="checkbox" id="legal" className="rounded text-primary" />
+                      <label htmlFor="legal" className="ml-2 text-sm">Legal</label>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="flex-1">
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="mb-6 bg-white/20">
+                <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-primary">All Projects</TabsTrigger>
+                <TabsTrigger value="recommended" className="data-[state=active]:bg-white data-[state=active]:text-primary">Recommended for You</TabsTrigger>
+                <TabsTrigger value="newest" className="data-[state=active]:bg-white data-[state=active]:text-primary">Newest</TabsTrigger>
+                <TabsTrigger value="popular" className="data-[state=active]:bg-white data-[state=active]:text-primary">Most Popular</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="all">
+                {isLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <div key={i} className="bg-white/30 rounded-xl h-96 animate-pulse"></div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredProjects.length > 0 ? (
+                      filteredProjects.map((project) => (
+                        <ProjectCard key={project.id} project={project} />
+                      ))
+                    ) : (
+                      <div className="col-span-3 bg-white/90 backdrop-blur-sm rounded-lg p-6 text-center py-12">
+                        <h3 className="text-lg font-medium text-primary">No projects found</h3>
+                        <p className="text-neutral-600">Try adjusting your search or filters</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="recommended">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="bg-neutral-50 rounded-xl h-96 animate-pulse"></div>
+                  {/* We would filter projects based on user profile match */}
+                  {filteredProjects.slice(0, 3).map((project) => (
+                    <ProjectCard key={project.id} project={project} />
                   ))}
                 </div>
-              ) : (
+              </TabsContent>
+              
+              <TabsContent value="newest">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProjects.length > 0 ? (
-                    filteredProjects.map((project) => (
-                      <ProjectCard key={project.id} project={project} />
-                    ))
-                  ) : (
-                    <div className="col-span-3 text-center py-12">
-                      <h3 className="text-lg font-medium">No projects found</h3>
-                      <p className="text-neutral-600">Try adjusting your search or filters</p>
-                    </div>
-                  )}
+                  {/* We would sort projects by creation date */}
+                  {filteredProjects.slice(0, 3).map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
                 </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="recommended">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* We would filter projects based on user profile match */}
-                {filteredProjects.slice(0, 3).map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="newest">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* We would sort projects by creation date */}
-                {filteredProjects.slice(0, 3).map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="popular">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* We would sort projects by popularity/applications */}
-                {filteredProjects.slice(3, 6).map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+              </TabsContent>
+              
+              <TabsContent value="popular">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* We would sort projects by popularity/applications */}
+                  {filteredProjects.slice(3, 6).map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>

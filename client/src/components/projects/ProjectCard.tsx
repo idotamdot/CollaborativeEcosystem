@@ -18,27 +18,28 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   ];
   
   return (
-    <div className="bg-neutral-50 rounded-xl overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md">
-      <div className="h-48 overflow-hidden">
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.02] group">
+      <div className="h-48 overflow-hidden relative">
         <img 
           src={project.image} 
           alt={project.title} 
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+        <Badge variant="outline" className="absolute top-3 right-3 bg-white/90 font-medium text-primary text-xs">
+          Seeking {project.membersNeeded} Members
+        </Badge>
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start">
-          <h3 className="text-xl font-semibold text-neutral-900">{project.title}</h3>
-          <Badge variant="project" className="text-xs">
-            Seeking {project.membersNeeded} Members
-          </Badge>
+          <h3 className="text-xl font-semibold text-primary">{project.title}</h3>
         </div>
-        <p className="mt-2 text-neutral-800">{project.description}</p>
+        <p className="mt-2 text-neutral-700 line-clamp-3">{project.description}</p>
         <div className="mt-4">
-          <h4 className="text-sm font-medium text-neutral-900">Needed Resources & Skills</h4>
+          <h4 className="text-sm font-medium text-primary/80">Needed Skills</h4>
           <div className="mt-2 flex flex-wrap gap-1">
             {project.neededSkills.map((skill: string) => (
-              <Badge key={skill} variant="skill" className="text-xs">{skill}</Badge>
+              <Badge key={skill} variant="secondary" className="text-xs bg-secondary/20 text-primary">{skill}</Badge>
             ))}
           </div>
         </div>
@@ -51,10 +52,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               </Avatar>
             ))}
           </div>
-          <Button
-            size="sm"
-            className="bg-primary hover:bg-primary-dark text-white"
-          >
+          <Button size="sm">
             <Link href={`/projects/${project.id}`}>Join Project</Link>
           </Button>
         </div>
