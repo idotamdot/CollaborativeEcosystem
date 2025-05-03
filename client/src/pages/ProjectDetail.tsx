@@ -25,8 +25,12 @@ import {
   Calendar,
   MapPin,
   Share2,
-  Heart
+  Heart,
+  Handshake,
+  FilePenLine
 } from "lucide-react";
+import ParticipationAgreement from "@/components/projects/ParticipationAgreement";
+import ProjectAgreements from "@/components/projects/ProjectAgreements";
 
 // Sample data for demonstration
 const sampleProject = {
@@ -144,6 +148,7 @@ const ProjectDetail = () => {
             <TabsList className="mb-6">
               <TabsTrigger value="about">About</TabsTrigger>
               <TabsTrigger value="members">Members</TabsTrigger>
+              <TabsTrigger value="agreements">Agreements</TabsTrigger>
               <TabsTrigger value="discussions">Discussions</TabsTrigger>
               <TabsTrigger value="resources">Resources</TabsTrigger>
             </TabsList>
@@ -209,6 +214,54 @@ const ProjectDetail = () => {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="agreements">
+              <div className="space-y-6">
+                <ProjectAgreements projectId={projectId} />
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Handshake className="h-5 w-5 text-primary" />
+                      Participation Agreement
+                    </CardTitle>
+                    <CardDescription>
+                      Sign a formal agreement to join this project under the Stewardship Investment Model
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="bg-blue-50 p-4 rounded-lg mb-4 border border-blue-100">
+                      <h3 className="font-medium mb-2 text-blue-700">Why Sign an Agreement?</h3>
+                      <p className="text-sm text-blue-700">
+                        Signing a participation agreement formalizes your commitment to this project and establishes
+                        how revenue will be distributed based on your contributions according to the Stewardship Investment Model.
+                      </p>
+                    </div>
+                    
+                    <div className="my-6">
+                      <ParticipationAgreement
+                        projectId={projectId}
+                        projectTitle={project.title}
+                        userId={1} // This would be the current user's ID in a real app
+                        userName="Current User" // This would be the current user's name in a real app
+                        userEmail="user@example.com" // This would be the current user's email in a real app
+                        trigger={
+                          <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600">
+                            <FilePenLine className="mr-2 h-4 w-4" />
+                            Sign Participation Agreement
+                          </Button>
+                        }
+                      />
+                    </div>
+                    
+                    <div className="text-xs text-gray-500 mt-2">
+                      By signing, you agree to the terms outlined in the participation agreement, including
+                      revenue sharing, governance, and the Eco-CoLab values.
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
             
             <TabsContent value="discussions">

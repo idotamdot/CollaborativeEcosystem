@@ -73,18 +73,17 @@ const ParticipationAgreement: React.FC<ParticipationAgreementProps> = ({
     }
     
     try {
-      await apiRequest({
-        url: "/api/agreements",
-        method: "POST",
-        body: {
+      await apiRequest(
+        "POST", 
+        "/api/agreements", 
+        {
           userId,
           projectId,
           role: selectedRole,
           hoursCommitted: hoursPerWeek,
           contractText: agreementText
-        },
-        throwOnFailure: true
-      });
+        }
+      );
       
       // Invalidate relevant query caches
       queryClient.invalidateQueries({ queryKey: [`/api/projects/${projectId}/agreements`] });
