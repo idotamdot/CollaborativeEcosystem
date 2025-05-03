@@ -83,7 +83,8 @@ const AddResourceForm = ({ onClose }: { onClose: () => void }) => {
       await apiRequest({
         url: "/api/resources",
         method: "POST",
-        body: formState
+        body: formState,
+        throwOnFailure: true
       });
       
       toast({

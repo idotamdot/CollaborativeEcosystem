@@ -5,7 +5,8 @@ import {
   insertUserSchema, 
   insertProjectSchema, 
   insertMessageSchema, 
-  insertProjectApplicationSchema 
+  insertProjectApplicationSchema,
+  insertResourceSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -380,6 +381,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(matches);
     } catch (error) {
       res.status(500).json({ message: "Error finding matches" });
+    }
+  });
+
+  // ===== Resources Routes =====
+  
+  // Get all resources
+  app.get("/api/resources", async (_req: Request, res: Response) => {
+    try {
+      const resources = await storage.getAllResources();
+      res.json(resources);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching resources" });
+    }
+  });
+  
+  // Get resource by ID
+  app.get("/api/resources/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid resource ID" });
+      }
+      
+      const resource = await storage.getResource(id);
+      if (!resource) {
+        return res.status(404).json({ message: "Resource not found" });
+      }
+      
+      res.json(resource);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching resource" });
+    }
+  });
+  
+  // Create resource
+  app.post("/api/resources", async (req: Request, res: Response) => {
+    try {
+      const resourceData = insertResourceSchema.parse(req.body);
+      const newResource = await storage.createResource(resourceData);
+      res.status(201).json(newResource);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid resource data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating resource" });
+    }
+  });
+  
+  // Update resource
+  app.put("/api/resources/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid resource ID" });
+      }
+      
+      const resourceData = req.body;
+      const updatedResource = await storage.updateResource(id, resourceData);
+      
+      if (!updatedResource) {
+        return res.status(404).json({ message: "Resource not found" });
+      }
+      
+      res.json(updatedResource);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid resource data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error updating resource" });
+    }
+  });
+  
+  // Get resources by location
+  app.get("/api/resources/location/:location", async (req: Request, res: Response) => {
+    try {
+      const location = req.params.location;
+      const resources = await storage.getResourcesByLocation(location);
+      res.json(resources);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching resources by location" });
+    }
+  });
+  
+  // Get resources by type
+  app.get("/api/resources/type/:type", async (req: Request, res: Response) => {
+    try {
+      const type = req.params.type;
+      const resources = await storage.getResourcesByType(type);
+      res.json(resources);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching resources by type" });
     }
   });
 
