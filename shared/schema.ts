@@ -50,7 +50,8 @@ export const projects = pgTable("projects", {
   description: text("description").notNull(),
   image: text("image"),
   createdById: integer("created_by_id").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").notNull(), // Keep original field as text
+  createdAtTimestamp: timestamp("created_at_timestamp").defaultNow(), // Add new timestamp field
   neededSkills: jsonb("needed_skills").notNull().default([]),
   neededResources: jsonb("needed_resources").notNull().default([]),
   members: jsonb("members").notNull().default([]),
@@ -71,6 +72,7 @@ export const insertProjectSchema = createInsertSchema(projects).pick({
   description: true,
   image: true,
   createdById: true,
+  createdAt: true,
   neededSkills: true,
   neededResources: true,
   members: true,
@@ -91,7 +93,8 @@ export const messages = pgTable("messages", {
   senderId: integer("sender_id").notNull(),
   recipientId: integer("recipient_id").notNull(),
   content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").notNull(), // Keep original field as text
+  createdAtTimestamp: timestamp("created_at_timestamp").defaultNow(), // Add new timestamp field
   read: boolean("read").notNull().default(false),
 });
 
@@ -99,6 +102,7 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   senderId: true,
   recipientId: true,
   content: true,
+  createdAt: true,
   read: true,
 });
 
@@ -109,7 +113,8 @@ export const projectApplications = pgTable("project_applications", {
   userId: integer("user_id").notNull(),
   message: text("message"),
   status: text("status").notNull().default("pending"),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").notNull(), // Keep original field as text
+  createdAtTimestamp: timestamp("created_at_timestamp").defaultNow(), // Add new timestamp field
   // Added fields from Eco CoLab guide
   roleApplied: text("role_applied"),
   hoursRequested: integer("hours_requested"),
@@ -120,6 +125,7 @@ export const insertProjectApplicationSchema = createInsertSchema(projectApplicat
   userId: true,
   message: true,
   status: true,
+  createdAt: true,
   roleApplied: true,
   hoursRequested: true,
 });

@@ -2,7 +2,11 @@ import {
   users, type User, type InsertUser,
   projects, type Project, type InsertProject,
   messages, type Message, type InsertMessage,
-  projectApplications, type ProjectApplication, type InsertProjectApplication
+  projectApplications, type ProjectApplication, type InsertProjectApplication,
+  investors, type Investor, type InsertInvestor,
+  contributions, type Contribution, type InsertContribution,
+  resources, type Resource, type InsertResource,
+  feedback, type Feedback, type InsertFeedback
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
