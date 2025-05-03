@@ -6,7 +6,7 @@ import {
   investors, type Investor, type InsertInvestor,
   contributions, type Contribution, type InsertContribution,
   resources, type Resource, type InsertResource,
-  feedback, type Feedback, type InsertFeedback
+  feedback as feedbackTable, type Feedback, type InsertFeedback
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
@@ -169,5 +169,167 @@ export class DatabaseStorage implements IStorage {
       .where(eq(projectApplications.id, id))
       .returning();
     return application;
+  }
+  
+  // SIM Investor methods
+  async getInvestor(id: number): Promise<Investor | undefined> {
+    const [investor] = await db
+      .select()
+      .from(investors)
+      .where(eq(investors.id, id));
+    return investor;
+  }
+  
+  async getInvestorsByUser(userId: number): Promise<Investor[]> {
+    return await db
+      .select()
+      .from(investors)
+      .where(eq(investors.userId, userId));
+  }
+  
+  async getInvestorsByProject(projectId: number): Promise<Investor[]> {
+    return await db
+      .select()
+      .from(investors)
+      .where(eq(investors.projectId, projectId));
+  }
+  
+  async createInvestor(insertInvestor: InsertInvestor): Promise<Investor> {
+    const [investor] = await db
+      .insert(investors)
+      .values(insertInvestor)
+      .returning();
+    return investor;
+  }
+  
+  async updateInvestorReimbursement(id: number, amount: number): Promise<Investor | undefined> {
+    // First get the current investor to calculate the new reimbursed amount
+    const [currentInvestor] = await db
+      .select()
+      .from(investors)
+      .where(eq(investors.id, id));
+    
+    if (!currentInvestor) return undefined;
+    
+    // Calculate new reimbursed amount and update
+    const currentReimbursed = parseFloat(currentInvestor.reimbursed.toString() || '0');
+    const newReimbursed = currentReimbursed + amount;
+    
+    const [updatedInvestor] = await db
+      .update(investors)
+      .set({ 
+        reimbursed: newReimbursed.toString(),
+        lastPaymentDate: new Date().toISOString().split('T')[0] // Current date in YYYY-MM-DD format
+      })
+      .where(eq(investors.id, id))
+      .returning();
+    
+    return updatedInvestor;
+  }
+  
+  // Contribution/Time Log methods
+  async getContribution(id: number): Promise<Contribution | undefined> {
+    const [contribution] = await db
+      .select()
+      .from(contributions)
+      .where(eq(contributions.id, id));
+    return contribution;
+  }
+  
+  async getContributionsByUser(userId: number): Promise<Contribution[]> {
+    return await db
+      .select()
+      .from(contributions)
+      .where(eq(contributions.userId, userId));
+  }
+  
+  async getContributionsByProject(projectId: number): Promise<Contribution[]> {
+    return await db
+      .select()
+      .from(contributions)
+      .where(eq(contributions.projectId, projectId));
+  }
+  
+  async createContribution(insertContribution: InsertContribution): Promise<Contribution> {
+    const [contribution] = await db
+      .insert(contributions)
+      .values(insertContribution)
+      .returning();
+    return contribution;
+  }
+  
+  // Resource methods
+  async getResource(id: number): Promise<Resource | undefined> {
+    const [resource] = await db
+      .select()
+      .from(resources)
+      .where(eq(resources.id, id));
+    return resource;
+  }
+  
+  async getAllResources(): Promise<Resource[]> {
+    return await db.select().from(resources);
+  }
+  
+  async getResourcesByLocation(location: string): Promise<Resource[]> {
+    return await db
+      .select()
+      .from(resources)
+      .where(eq(resources.location, location));
+  }
+  
+  async getResourcesByType(type: string): Promise<Resource[]> {
+    return await db
+      .select()
+      .from(resources)
+      .where(eq(resources.type, type));
+  }
+  
+  async createResource(insertResource: InsertResource): Promise<Resource> {
+    const [resource] = await db
+      .insert(resources)
+      .values(insertResource)
+      .returning();
+    return resource;
+  }
+  
+  async updateResource(id: number, resourceData: Partial<InsertResource>): Promise<Resource | undefined> {
+    const [resource] = await db
+      .update(resources)
+      .set(resourceData)
+      .where(eq(resources.id, id))
+      .returning();
+    return resource;
+  }
+  
+  // Feedback methods
+  async getFeedback(id: number): Promise<Feedback | undefined> {
+    const [feedbackItem] = await db
+      .select()
+      .from(feedbackTable)
+      .where(eq(feedbackTable.id, id));
+    return feedbackItem;
+  }
+  
+  async getFeedbackByUser(userId: number): Promise<Feedback[]> {
+    return await db
+      .select()
+      .from(feedbackTable)
+      .where(eq(feedbackTable.userId, userId));
+  }
+  
+  async getFeedbackByProject(projectId: number): Promise<Feedback[]> {
+    return await db
+      .select()
+      .from(feedbackTable)
+      .where(eq(feedbackTable.projectId, projectId));
+  }
+  
+  async createFeedback(insertFeedback: InsertFeedback): Promise<Feedback> {
+    const [feedbackEntry] = await db
+      .insert(feedbackTable)
+      .values(insertFeedback)
+      .returning();
+    return feedbackEntry;
   }
 }

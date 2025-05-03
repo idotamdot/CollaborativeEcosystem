@@ -2,7 +2,11 @@ import {
   users, type User, type InsertUser,
   projects, type Project, type InsertProject,
   messages, type Message, type InsertMessage,
-  projectApplications, type ProjectApplication, type InsertProjectApplication
+  projectApplications, type ProjectApplication, type InsertProjectApplication,
+  investors, type Investor, type InsertInvestor,
+  contributions, type Contribution, type InsertContribution,
+  resources, type Resource, type InsertResource,
+  feedback, type Feedback, type InsertFeedback
 } from "@shared/schema";
 import { DatabaseStorage } from "./database-storage";
 
@@ -34,6 +38,33 @@ export interface IStorage {
   getProjectApplicationsByProject(projectId: number): Promise<ProjectApplication[]>;
   createProjectApplication(application: InsertProjectApplication): Promise<ProjectApplication>;
   updateProjectApplicationStatus(id: number, status: string): Promise<ProjectApplication | undefined>;
+  
+  // SIM Investor methods
+  getInvestor(id: number): Promise<Investor | undefined>;
+  getInvestorsByUser(userId: number): Promise<Investor[]>;
+  getInvestorsByProject(projectId: number): Promise<Investor[]>;
+  createInvestor(investor: InsertInvestor): Promise<Investor>;
+  updateInvestorReimbursement(id: number, amount: number): Promise<Investor | undefined>;
+  
+  // Contribution/Time Log methods
+  getContribution(id: number): Promise<Contribution | undefined>;
+  getContributionsByUser(userId: number): Promise<Contribution[]>;
+  getContributionsByProject(projectId: number): Promise<Contribution[]>;
+  createContribution(contribution: InsertContribution): Promise<Contribution>;
+  
+  // Resource methods
+  getResource(id: number): Promise<Resource | undefined>;
+  getAllResources(): Promise<Resource[]>;
+  getResourcesByLocation(location: string): Promise<Resource[]>;
+  getResourcesByType(type: string): Promise<Resource[]>;
+  createResource(resource: InsertResource): Promise<Resource>;
+  updateResource(id: number, resourceData: Partial<InsertResource>): Promise<Resource | undefined>;
+  
+  // Feedback methods
+  getFeedback(id: number): Promise<Feedback | undefined>;
+  getFeedbackByUser(userId: number): Promise<Feedback[]>;
+  getFeedbackByProject(projectId: number): Promise<Feedback[]>;
+  createFeedback(feedback: InsertFeedback): Promise<Feedback>;
 }
 
 /* Keeping this for reference but we're now using DatabaseStorage
