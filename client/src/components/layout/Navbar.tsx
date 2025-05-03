@@ -27,6 +27,9 @@ const Navbar = () => {
             <Link href="/projects" className={`${location === "/projects" ? "text-primary" : "text-neutral-800"} hover:text-primary font-medium`}>
               Projects
             </Link>
+            <Link href="/stewardship-model" className={`${location === "/stewardship-model" ? "text-primary" : "text-neutral-800"} hover:text-primary font-medium`}>
+              Stewardship Model
+            </Link>
             <Link href="/resources" className={`${location === "/resources" ? "text-primary" : "text-neutral-800"} hover:text-primary font-medium`}>
               Resources
             </Link>
@@ -68,6 +71,9 @@ const Navbar = () => {
             </Link>
             <Link href="/projects" className="block px-3 py-2 rounded-md text-base font-medium text-neutral-800 hover:text-primary hover:bg-neutral-100">
               Projects
+            </Link>
+            <Link href="/stewardship-model" className="block px-3 py-2 rounded-md text-base font-medium text-neutral-800 hover:text-primary hover:bg-neutral-100">
+              Stewardship Model
             </Link>
             <Link href="/resources" className="block px-3 py-2 rounded-md text-base font-medium text-neutral-800 hover:text-primary hover:bg-neutral-100">
               Resources

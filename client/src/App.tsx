@@ -11,6 +11,7 @@ import Profile from "@/pages/Profile";
 import Projects from "@/pages/Projects";
 import ProjectDetail from "@/pages/ProjectDetail";
 import Discover from "@/pages/Discover";
+import SteewardshipModel from "@/pages/SteewardshipModel";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
           <Route path="/projects" component={Projects} />
           <Route path="/projects/:id" component={ProjectDetail} />
           <Route path="/discover" component={Discover} />
+          <Route path="/stewardship-model" component={SteewardshipModel} />
           <Route component={NotFound} />
         </Switch>
       </main>
