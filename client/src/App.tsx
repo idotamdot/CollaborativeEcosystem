@@ -20,6 +20,7 @@ import TimesheetTracker from "@/pages/TimesheetTracker";
 import EcoDictionary from "@/pages/EcoDictionary";
 import LegalTemplates from "@/pages/LegalTemplates";
 import TaskAutomation from "@/pages/TaskAutomation";
+import EcologicalImpact from "@/pages/EcologicalImpact";
 
 // Placeholder component for pages still under development
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -90,6 +91,7 @@ function Router() {
               <Route path="/dictionary" component={EcoDictionary} />
               <Route path="/legal-templates" component={LegalTemplates} />
               <Route path="/task-automation" component={TaskAutomation} />
+              <Route path="/ecological-impact" component={EcologicalImpact} />
               
               {/* About section */}
               <Route path="/mission">

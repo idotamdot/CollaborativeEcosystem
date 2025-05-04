@@ -80,6 +80,7 @@ const sidebarItems: SidebarItemType[] = [
     submenu: [
       { title: 'Timesheet Tracker', path: '/timesheet' },
       { title: 'Task Automation', path: '/task-automation' },
+      { title: 'Ecological Impact', path: '/ecological-impact' },
       { title: 'Eco Dictionary', path: '/dictionary' },
       { title: 'Legal Templates', path: '/legal-templates' },
       { title: 'Tax Reporting', path: '/timesheet?tab=tax' },
