@@ -55,6 +55,8 @@ import {
   TooltipTrigger 
 } from "@/components/ui/tooltip";
 import { format, addDays } from 'date-fns';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/hooks/use-toast';
 
 interface Achievement {
   id: string;
@@ -102,155 +104,8 @@ interface Project {
   progress: number;
 }
 
-const projects: Project[] = [
-  { id: 'p1', name: 'Urban Garden Collective', progress: 65 },
-  { id: 'p2', name: 'Renewable Energy Co-op', progress: 42 },
-  { id: 'p3', name: 'Sustainable Housing Initiative', progress: 78 },
-  { id: 'p4', name: 'Zero Waste Store', progress: 23 },
-];
-
-const users: User[] = [
-  { id: 'u1', name: 'Alex Morgan', avatar: '', role: 'Project Coordinator', level: 8, points: 1450 },
-  { id: 'u2', name: 'Jamie Green', avatar: '', role: 'Ecological Specialist', level: 5, points: 820 },
-  { id: 'u3', name: 'Sam Taylor', avatar: '', role: 'Community Outreach', level: 6, points: 960 },
-  { id: 'u4', name: 'Riley Johnson', avatar: '', role: 'Technical Lead', level: 7, points: 1235 },
-];
-
-const initialTasks: Task[] = [
-  {
-    id: 't1',
-    title: 'Draft Cooperative Bylaws',
-    description: 'Create the initial bylaws document incorporating sociocratic governance principles.',
-    deadline: format(addDays(new Date(), 14), 'yyyy-MM-dd'),
-    priority: 'high',
-    status: 'in-progress',
-    assignedTo: ['u1', 'u3'],
-    category: 'legal',
-    points: 100,
-    completionPercentage: 60,
-    subtasks: [
-      { id: 's1', title: 'Research legal requirements', completed: true },
-      { id: 's2', title: 'Write governance section', completed: true },
-      { id: 's3', title: 'Write membership section', completed: true },
-      { id: 's4', title: 'Write financial section', completed: false },
-      { id: 's5', title: 'Review with legal expert', completed: false },
-    ]
-  },
-  {
-    id: 't2',
-    title: 'Set Up Financial Tracking System',
-    description: 'Implement a transparent financial tracking system for revenue sharing.',
-    deadline: format(addDays(new Date(), 7), 'yyyy-MM-dd'),
-    priority: 'medium',
-    status: 'pending',
-    assignedTo: ['u4'],
-    category: 'financial',
-    points: 75,
-    completionPercentage: 0,
-    subtasks: [
-      { id: 's6', title: 'Research appropriate software', completed: false },
-      { id: 's7', title: 'Set up chart of accounts', completed: false },
-      { id: 's8', title: 'Configure revenue sharing rules', completed: false },
-      { id: 's9', title: 'Train team members', completed: false },
-    ]
-  },
-  {
-    id: 't3',
-    title: 'Ecological Impact Assessment',
-    description: 'Conduct baseline ecological impact assessment for the project.',
-    deadline: format(addDays(new Date(), 21), 'yyyy-MM-dd'),
-    priority: 'high',
-    status: 'pending',
-    assignedTo: ['u2'],
-    category: 'ecological',
-    points: 150,
-    completionPercentage: 0,
-    subtasks: [
-      { id: 's10', title: 'Define assessment scope', completed: false },
-      { id: 's11', title: 'Gather baseline data', completed: false },
-      { id: 's12', title: 'Analyze ecological footprint', completed: false },
-      { id: 's13', title: 'Identify regenerative opportunities', completed: false },
-      { id: 's14', title: 'Draft assessment report', completed: false },
-    ]
-  },
-  {
-    id: 't4',
-    title: 'Develop Stakeholder Map',
-    description: 'Create comprehensive stakeholder map identifying all affected parties.',
-    deadline: format(addDays(new Date(), 5), 'yyyy-MM-dd'),
-    priority: 'medium',
-    status: 'completed',
-    assignedTo: ['u3'],
-    category: 'community',
-    points: 50,
-    completionPercentage: 100,
-    subtasks: [
-      { id: 's15', title: 'Identify key stakeholder groups', completed: true },
-      { id: 's16', title: 'Map relationships and influence', completed: true },
-      { id: 's17', title: 'Document stakeholder needs', completed: true },
-      { id: 's18', title: 'Create visualization', completed: true },
-    ]
-  },
-];
-
-const initialAchievements: Achievement[] = [
-  {
-    id: 'a1',
-    name: 'Governance Pioneer',
-    description: 'Complete 5 tasks in the legal or governance category',
-    icon: <Shield className="h-6 w-6 text-blue-500" />,
-    unlocked: false,
-    progress: 1,
-    maxProgress: 5
-  },
-  {
-    id: 'a2',
-    name: 'Ecological Guardian',
-    description: 'Complete 3 ecological impact assessments',
-    icon: <Zap className="h-6 w-6 text-green-500" />,
-    unlocked: false,
-    progress: 0,
-    maxProgress: 3
-  },
-  {
-    id: 'a3',
-    name: 'Community Builder',
-    description: 'Involve 10 different stakeholders in project tasks',
-    icon: <Users className="h-6 w-6 text-purple-500" />,
-    unlocked: false,
-    progress: 4,
-    maxProgress: 10
-  },
-  {
-    id: 'a4',
-    name: 'Perfect Timing',
-    description: 'Complete 10 tasks before their deadlines',
-    icon: <Clock className="h-6 w-6 text-indigo-500" />,
-    unlocked: false,
-    progress: 3,
-    maxProgress: 10
-  },
-  {
-    id: 'a5',
-    name: 'Team Player',
-    description: 'Collaborate on 15 tasks with other team members',
-    icon: <BadgeCheck className="h-6 w-6 text-teal-500" />,
-    unlocked: false,
-    progress: 7,
-    maxProgress: 15
-  },
-  {
-    id: 'a6',
-    name: 'First Milestone',
-    description: 'Complete your first project',
-    icon: <Star className="h-6 w-6 text-yellow-500" />,
-    unlocked: false
-  },
-];
-
 const TaskAutomation: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements);
+  const queryClient = useQueryClient();
   const [selectedProject, setSelectedProject] = useState<string>('p1');
   const [showNewTaskDialog, setShowNewTaskDialog] = useState(false);
   const [showCompletedDialog, setShowCompletedDialog] = useState(false);
@@ -264,12 +119,68 @@ const TaskAutomation: React.FC = () => {
     category: 'general',
     assignedTo: [] as string[],
   });
-  const [userPoints, setUserPoints] = useState(350);
-  const [userLevel, setUserLevel] = useState(3);
-  const [levelProgress, setLevelProgress] = useState(65);
+
+  // Fetch projects
+  const { data: projects = [] } = useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      const res = await fetch('/api/projects');
+      if (!res.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      return res.json();
+    }
+  });
+
+  // Fetch users
+  const { data: users = [] } = useQuery<User[]>({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const res = await fetch('/api/users');
+      if (!res.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      return res.json();
+    }
+  });
+
+  // Fetch tasks
+  const { data: tasks = [] } = useQuery<Task[]>({
+    queryKey: ['tasks', selectedProject],
+    queryFn: async () => {
+      const res = await fetch(`/api/projects/${selectedProject}/tasks`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch tasks');
+      }
+      return res.json();
+    },
+    enabled: !!selectedProject,
+  });
+
+  // Fetch achievements
+  const { data: achievements = [] } = useQuery<Achievement[]>({
+    queryKey: ['achievements'],
+    queryFn: async () => {
+      const res = await fetch('/api/achievements');
+      if (!res.ok) {
+        throw new Error('Failed to fetch achievements');
+      }
+      return res.json();
+    }
+  });
   
   // Active user (would come from auth context in a real app)
-  const activeUser = users[0];
+  const { data: activeUser } = useQuery<User>({
+    queryKey: ['activeUser'],
+    queryFn: async () => {
+      // In a real app, you would fetch the current user's data
+      const res = await fetch('/api/users/1'); // Assuming user with ID 1 is the active user
+      if (!res.ok) {
+        throw new Error('Failed to fetch active user');
+      }
+      return res.json();
+    }
+  });
   
   const calculateTaskCompletion = (task: Task) => {
     if (task.subtasks.length === 0) return task.completionPercentage;
@@ -277,138 +188,85 @@ const TaskAutomation: React.FC = () => {
     return Math.round((completedSubtasks / task.subtasks.length) * 100);
   };
   
-  const handleAddTask = () => {
-    const newTask: Task = {
-      id: `t${tasks.length + 1}`,
-      title: newTaskForm.title,
-      description: newTaskForm.description,
-      deadline: newTaskForm.deadline,
-      priority: newTaskForm.priority as 'low' | 'medium' | 'high',
-      status: 'pending',
-      assignedTo: newTaskForm.assignedTo,
-      category: newTaskForm.category,
-      points: calculateTaskPoints(newTaskForm.priority as 'low' | 'medium' | 'high', newTaskForm.category),
-      completionPercentage: 0,
-      subtasks: [],
-    };
-    
-    setTasks([...tasks, newTask]);
-    setShowNewTaskDialog(false);
-    
-    // Reset form
-    setNewTaskForm({
-      title: '',
-      description: '',
-      deadline: format(addDays(new Date(), 7), 'yyyy-MM-dd'),
-      priority: 'medium',
-      category: 'general',
-      assignedTo: [],
-    });
-  };
-  
-  const calculateTaskPoints = (priority: 'low' | 'medium' | 'high', category: string) => {
-    let points = 50; // Base points
-    
-    // Adjust for priority
-    if (priority === 'medium') points = 75;
-    if (priority === 'high') points = 100;
-    
-    // Bonus for special categories
-    if (['ecological', 'legal', 'governance'].includes(category)) points += 25;
-    
-    return points;
-  };
-  
-  const handleUpdateSubtask = (taskId: string, subtaskId: string, completed: boolean) => {
-    const updatedTasks = tasks.map(task => {
-      if (task.id === taskId) {
-        const updatedSubtasks = task.subtasks.map(subtask => 
-          subtask.id === subtaskId ? { ...subtask, completed } : subtask
-        );
-        
-        const completionPercentage = Math.round((updatedSubtasks.filter(st => st.completed).length / updatedSubtasks.length) * 100);
-        
-        // Check if task is now complete
-        const isNowCompleted = completionPercentage === 100;
-        
-        return { 
-          ...task, 
-          subtasks: updatedSubtasks,
-          completionPercentage,
-          status: isNowCompleted ? 'completed' : task.status
-        };
+  const addTaskMutation = useMutation<Task, Error, Partial<Task>>({
+    mutationFn: async (newTask) => {
+      const res = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newTask, projectId: selectedProject }),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to add task');
       }
-      return task;
-    });
-    
-    setTasks(updatedTasks);
-    
-    // Check if task is now completed
-    const updatedTask = updatedTasks.find(t => t.id === taskId);
-    if (updatedTask && updatedTask.completionPercentage === 100 && updatedTask.status !== 'completed') {
-      setCompletedTaskId(taskId);
-      setEarnedPoints(updatedTask.points);
-      setShowCompletedDialog(true);
-      
-      // Update user points and level
-      handleEarnPoints(updatedTask.points);
-      
-      // Update achievements
-      updateAchievements(updatedTask);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', selectedProject] });
+      toast({ title: 'Task added successfully' });
+      setShowNewTaskDialog(false);
+      setNewTaskForm({
+        title: '',
+        description: '',
+        deadline: format(addDays(new Date(), 7), 'yyyy-MM-dd'),
+        priority: 'medium',
+        category: 'general',
+        assignedTo: [],
+      });
+    },
+    onError: () => {
+      toast({ title: 'Error adding task', variant: 'destructive' });
     }
+  });
+
+  const handleAddTask = () => {
+    addTaskMutation.mutate(newTaskForm);
   };
   
-  const handleEarnPoints = (points: number) => {
-    const newPoints = userPoints + points;
-    setUserPoints(newPoints);
-    
-    // Calculate new level (simple formula: level = points / 200, max 20)
-    const newLevel = Math.min(Math.floor(newPoints / 200) + 1, 20);
-    setUserLevel(newLevel);
-    
-    // Calculate progress to next level
-    const pointsInCurrentLevel = newPoints - (newLevel - 1) * 200;
-    const progressPercent = (pointsInCurrentLevel / 200) * 100;
-    setLevelProgress(progressPercent);
-  };
-  
-  const updateAchievements = (completedTask: Task) => {
-    const updatedAchievements = achievements.map(achievement => {
-      let updated = {...achievement};
-      
-      // Update based on achievement criteria
-      switch(achievement.id) {
-        case 'a1': // Governance Pioneer
-          if (['legal', 'governance'].includes(completedTask.category)) {
-            updated.progress = (updated.progress || 0) + 1;
-            if (updated.progress === updated.maxProgress) {
-              updated.unlocked = true;
-            }
-          }
-          break;
-        case 'a2': // Ecological Guardian
-          if (completedTask.category === 'ecological') {
-            updated.progress = (updated.progress || 0) + 1;
-            if (updated.progress === updated.maxProgress) {
-              updated.unlocked = true;
-            }
-          }
-          break;
-        case 'a4': // Perfect Timing
-          if (completedTask.deadline && new Date(completedTask.deadline) >= new Date()) {
-            updated.progress = (updated.progress || 0) + 1;
-            if (updated.progress === updated.maxProgress) {
-              updated.unlocked = true;
-            }
-          }
-          break;
-        // Add other achievement updates as needed
+  const updateTaskMutation = useMutation<Task, Error, Partial<Task>>({
+    mutationFn: async (updatedTask) => {
+      const res = await fetch(`/api/tasks/${updatedTask.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTask),
+      });
+      if (!res.ok) {
+        throw new Error('Failed to update task');
       }
-      
-      return updated;
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', selectedProject] });
+      if (data.status === 'completed') {
+        setCompletedTaskId(data.id);
+        setEarnedPoints(data.points);
+        setShowCompletedDialog(true);
+        // Invalidate user and achievements queries to refetch updated data
+        queryClient.invalidateQueries({ queryKey: ['activeUser'] });
+        queryClient.invalidateQueries({ queryKey: ['achievements'] });
+      }
+    },
+    onError: () => {
+      toast({ title: 'Error updating task', variant: 'destructive' });
+    }
+  });
+
+  const handleUpdateSubtask = (taskId: string, subtaskId: string, completed: boolean) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const updatedSubtasks = task.subtasks.map(subtask =>
+      subtask.id === subtaskId ? { ...subtask, completed } : subtask
+    );
+
+    const completionPercentage = Math.round((updatedSubtasks.filter(st => st.completed).length / updatedSubtasks.length) * 100);
+    const isNowCompleted = completionPercentage === 100;
+
+    updateTaskMutation.mutate({
+      id: taskId,
+      subtasks: updatedSubtasks,
+      completionPercentage,
+      status: isNowCompleted ? 'completed' : task.status,
     });
-    
-    setAchievements(updatedAchievements);
   };
   
   const getProgressColor = (percentage: number) => {
@@ -626,6 +484,7 @@ const TaskAutomation: React.FC = () => {
                             text-xs
                           `}
                           disabled={task.status === 'completed'}
+                          onClick={() => updateTaskMutation.mutate({ ...task, status: 'completed' })}
                         >
                           {task.status === 'completed' ? 'Completed' : 'Mark Complete'}
                         </Button>
@@ -644,7 +503,7 @@ const TaskAutomation: React.FC = () => {
               <CardTitle className="flex items-center justify-between">
                 <span>Your Progress</span>
                 <Badge variant="outline" className="text-lg font-bold bg-blue-50">
-                  Level {userLevel}
+                  Level {activeUser?.level || 0}
                 </Badge>
               </CardTitle>
             </CardHeader>
@@ -652,14 +511,14 @@ const TaskAutomation: React.FC = () => {
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs text-slate-500">
-                    {userPoints} points
+                    {activeUser?.points || 0} points
                   </span>
                   <span className="text-xs text-slate-500">
-                    {Math.floor(levelProgress)}% to Level {userLevel + 1}
+                    {activeUser ? Math.floor(((activeUser.points % 200) / 200) * 100) : 0}% to Level {activeUser ? activeUser.level + 1 : 1}
                   </span>
                 </div>
                 <Progress 
-                  value={levelProgress} 
+                  value={activeUser ? ((activeUser.points % 200) / 200) * 100 : 0}
                   className="h-2 bg-blue-100" 
                 />
               </div>
@@ -669,8 +528,8 @@ const TaskAutomation: React.FC = () => {
                   <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2">
                     <Award className="w-8 h-8 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold">350 points earned</h3>
-                  <p className="text-sm text-slate-500">3 tasks completed this week</p>
+                  <h3 className="font-semibold">{activeUser?.points || 0} points earned</h3>
+                  <p className="text-sm text-slate-500">{tasks.filter(t => t.status === 'completed').length} tasks completed this week</p>
                 </div>
                 
                 <Button className="w-full bg-green-600 hover:bg-green-700">
@@ -868,11 +727,11 @@ const TaskAutomation: React.FC = () => {
                 <div className="text-sm text-slate-500">Tasks Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{userPoints}</div>
+                <div className="text-3xl font-bold text-blue-600">{activeUser?.points || 0}</div>
                 <div className="text-sm text-slate-500">Total Points</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{userLevel}</div>
+                <div className="text-3xl font-bold text-blue-600">{activeUser?.level || 0}</div>
                 <div className="text-sm text-slate-500">Current Level</div>
               </div>
             </div>
@@ -972,7 +831,7 @@ const TaskAutomation: React.FC = () => {
                     <Progress value={25} className="h-2" />
                   </div>
                   <div>
-                    <div className="flex justify-between items-center mb-1">
+                    <div className="flex justify-between items-.center mb-1">
                       <span className="text-sm">Community Tasks</span>
                       <span className="text-xs font-medium">3/5 completed</span>
                     </div>

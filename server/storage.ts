@@ -7,7 +7,9 @@ import {
   contributions, type Contribution, type InsertContribution,
   resources, type Resource, type InsertResource,
   feedback, type Feedback, type InsertFeedback,
-  agreements, type Agreement, type InsertAgreement
+  agreements, type Agreement, type InsertAgreement,
+  timeEntries, type TimeEntry, type InsertTimeEntry,
+  mileageEntries, type MileageEntry, type InsertMileageEntry
 } from "@shared/schema";
 import { DatabaseStorage } from "./database-storage";
 
@@ -73,6 +75,18 @@ export interface IStorage {
   getAgreementsByProject(projectId: number): Promise<Agreement[]>;
   createAgreement(agreement: InsertAgreement): Promise<Agreement>;
   updateAgreementStatus(id: number, status: string): Promise<Agreement | undefined>;
+
+  // Timesheet methods
+  getTimeEntry(id: number): Promise<TimeEntry | undefined>;
+  getTimeEntriesByUser(userId: number): Promise<TimeEntry[]>;
+  createTimeEntry(timeEntry: InsertTimeEntry): Promise<TimeEntry>;
+  deleteTimeEntry(id: number): Promise<boolean>;
+
+  // Mileage methods
+  getMileageEntry(id: number): Promise<MileageEntry | undefined>;
+  getMileageEntriesByUser(userId: number): Promise<MileageEntry[]>;
+  createMileageEntry(mileageEntry: InsertMileageEntry): Promise<MileageEntry>;
+  deleteMileageEntry(id: number): Promise<boolean>;
 }
 
 /* Keeping this for reference but we're now using DatabaseStorage
