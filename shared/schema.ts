@@ -236,6 +236,50 @@ export const insertAgreementSchema = createInsertSchema(agreements).pick({
   ipAddress: true,
 });
 
+// Time Entries table
+export const timeEntries = pgTable("time_entries", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  projectId: integer("project_id").notNull(),
+  date: date("date").notNull(),
+  hours: numeric("hours").notNull(),
+  task: text("task").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertTimeEntrySchema = createInsertSchema(timeEntries).pick({
+  userId: true,
+  projectId: true,
+  date: true,
+  hours: true,
+  task: true,
+  notes: true,
+});
+
+// Mileage Entries table
+export const mileageEntries = pgTable("mileage_entries", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  projectId: integer("project_id").notNull(),
+  date: date("date").notNull(),
+  startLocation: text("start_location").notNull(),
+  endLocation: text("end_location").notNull(),
+  miles: numeric("miles").notNull(),
+  purpose: text("purpose"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertMileageEntrySchema = createInsertSchema(mileageEntries).pick({
+  userId: true,
+  projectId: true,
+  date: true,
+  startLocation: true,
+  endLocation: true,
+  miles: true,
+  purpose: true,
+});
+
 export type ProjectApplication = typeof projectApplications.$inferSelect;
 export type InsertProjectApplication = z.infer<typeof insertProjectApplicationSchema>;
 
@@ -254,6 +298,12 @@ export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
 export type Agreement = typeof agreements.$inferSelect;
 export type InsertAgreement = z.infer<typeof insertAgreementSchema>;
 
+export type TimeEntry = typeof timeEntries.$inferSelect;
+export type InsertTimeEntry = z.infer<typeof insertTimeEntrySchema>;
+
+export type MileageEntry = typeof mileageEntries.$inferSelect;
+export type InsertMileageEntry = z.infer<typeof insertMileageEntrySchema>;
+
 // Define relationships between tables
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects, { relationName: "userProjects" }),
@@ -264,6 +314,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   contributions: many(contributions, { relationName: "userContributions" }),
   feedbacks: many(feedback, { relationName: "userFeedbacks" }),
   agreements: many(agreements, { relationName: "userAgreements" }),
+  timeEntries: many(timeEntries, { relationName: "userTimeEntries" }),
+  mileageEntries: many(mileageEntries, { relationName: "userMileageEntries" }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -277,6 +329,8 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   contributions: many(contributions, { relationName: "projectContributions" }),
   feedbacks: many(feedback, { relationName: "projectFeedbacks" }),
   agreements: many(agreements, { relationName: "projectAgreements" }),
+  timeEntries: many(timeEntries, { relationName: "projectTimeEntries" }),
+  mileageEntries: many(mileageEntries, { relationName: "projectMileageEntries" }),
 }));
 
 export const projectApplicationsRelations = relations(projectApplications, ({ one }) => ({
@@ -354,5 +408,31 @@ export const agreementsRelations = relations(agreements, ({ one }) => ({
     fields: [agreements.projectId],
     references: [projects.id],
     relationName: "projectAgreements"
+  }),
+}));
+
+export const timeEntriesRelations = relations(timeEntries, ({ one }) => ({
+  user: one(users, {
+    fields: [timeEntries.userId],
+    references: [users.id],
+    relationName: "userTimeEntries"
+  }),
+  project: one(projects, {
+    fields: [timeEntries.projectId],
+    references: [projects.id],
+    relationName: "projectTimeEntries"
+  }),
+}));
+
+export const mileageEntriesRelations = relations(mileageEntries, ({ one }) => ({
+  user: one(users, {
+    fields: [mileageEntries.userId],
+    references: [users.id],
+    relationName: "userMileageEntries"
+  }),
+  project: one(projects, {
+    fields: [mileageEntries.projectId],
+    references: [projects.id],
+    relationName: "projectMileageEntries"
   }),
 }));
