@@ -280,6 +280,70 @@ export const insertMileageEntrySchema = createInsertSchema(mileageEntries).pick(
   purpose: true,
 });
 
+
+// Tasks table
+export const tasks = pgTable("tasks", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  deadline: date("deadline"),
+  priority: text("priority").notNull().default("medium"),
+  status: text("status").notNull().default("pending"),
+  assignedTo: jsonb("assigned_to").default([]),
+  category: text("category"),
+  points: integer("points").notNull().default(0),
+  completionPercentage: integer("completion_percentage").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertTaskSchema = createInsertSchema(tasks).pick({
+  projectId: true,
+  title: true,
+  description: true,
+  deadline: true,
+  priority: true,
+  status: true,
+  assignedTo: true,
+  category: true,
+  points: true,
+  completionPercentage: true,
+});
+
+// Subtasks table
+export const subtasks = pgTable("subtasks", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").notNull(),
+  title: text("title").notNull(),
+  completed: boolean("completed").notNull().default(false),
+});
+
+export const insertSubtaskSchema = createInsertSchema(subtasks).pick({
+  taskId: true,
+  title: true,
+  completed: true,
+});
+
+// Achievements table
+export const achievements = pgTable("achievements", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  icon: text("icon"),
+  unlocked: boolean("unlocked").notNull().default(false),
+  progress: integer("progress"),
+  maxProgress: integer("max_progress"),
+});
+
+export const insertAchievementSchema = createInsertSchema(achievements).pick({
+  name: true,
+  description: true,
+  icon: true,
+  unlocked: true,
+  progress: true,
+  maxProgress: true,
+});
+
 export type ProjectApplication = typeof projectApplications.$inferSelect;
 export type InsertProjectApplication = z.infer<typeof insertProjectApplicationSchema>;
 
@@ -304,6 +368,17 @@ export type InsertTimeEntry = z.infer<typeof insertTimeEntrySchema>;
 export type MileageEntry = typeof mileageEntries.$inferSelect;
 export type InsertMileageEntry = z.infer<typeof insertMileageEntrySchema>;
 
+
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = z.infer<typeof insertTaskSchema>;
+
+export type Subtask = typeof subtasks.$inferSelect;
+export type InsertSubtask = z.infer<typeof insertSubtaskSchema>;
+
+export type Achievement = typeof achievements.$inferSelect;
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+
+
 // Define relationships between tables
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects, { relationName: "userProjects" }),
@@ -316,6 +391,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   agreements: many(agreements, { relationName: "userAgreements" }),
   timeEntries: many(timeEntries, { relationName: "userTimeEntries" }),
   mileageEntries: many(mileageEntries, { relationName: "userMileageEntries" }),
+
+  tasks: many(tasks, { relationName: "userTasks" }),
+
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -331,6 +409,9 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   agreements: many(agreements, { relationName: "projectAgreements" }),
   timeEntries: many(timeEntries, { relationName: "projectTimeEntries" }),
   mileageEntries: many(mileageEntries, { relationName: "projectMileageEntries" }),
+
+  tasks: many(tasks, { relationName: "projectTasks" }),
+
 }));
 
 export const projectApplicationsRelations = relations(projectApplications, ({ one }) => ({
@@ -436,3 +517,22 @@ export const mileageEntriesRelations = relations(mileageEntries, ({ one }) => ({
     relationName: "projectMileageEntries"
   }),
 }));
+
+
+export const tasksRelations = relations(tasks, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [tasks.projectId],
+    references: [projects.id],
+    relationName: "projectTasks"
+  }),
+  subtasks: many(subtasks, { relationName: "taskSubtasks" }),
+}));
+
+export const subtasksRelations = relations(subtasks, ({ one }) => ({
+  task: one(tasks, {
+    fields: [subtasks.taskId],
+    references: [tasks.id],
+    relationName: "taskSubtasks"
+  }),
+}));
+

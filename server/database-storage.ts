@@ -9,7 +9,12 @@ import {
   feedback as feedbackTable, type Feedback, type InsertFeedback,
   agreements, type Agreement, type InsertAgreement,
   timeEntries, type TimeEntry, type InsertTimeEntry,
-  mileageEntries, type MileageEntry, type InsertMileageEntry
+ //*feature/timesheet-mileage-tracker
+  mileageEntries, type MileageEntry, type InsertMileageEntry,
+  tasks, type Task, type InsertTask,
+  subtasks, type Subtask, type InsertSubtask,
+  achievements, type Achievement
+
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
@@ -436,5 +441,44 @@ export class DatabaseStorage implements IStorage {
       .delete(mileageEntries)
       .where(eq(mileageEntries.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
+  }
+//* feature/timesheet-mileage-tracker
+
+  // Task Automation methods
+  async getTasksByProject(projectId: number): Promise<Task[]> {
+    return await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.projectId, projectId));
+  }
+
+  async createTask(insertTask: InsertTask): Promise<Task> {
+    const [task] = await db
+      .insert(tasks)
+      .values(insertTask)
+      .returning();
+    return task;
+  }
+
+  async updateTask(id: number, taskData: Partial<InsertTask>): Promise<Task | undefined> {
+    const [task] = await db
+      .update(tasks)
+      .set(taskData)
+      .where(eq(tasks.id, id))
+      .returning();
+    return task;
+  }
+
+  async updateSubtask(id: number, subtaskData: Partial<InsertSubtask>): Promise<Subtask | undefined> {
+    const [subtask] = await db
+      .update(subtasks)
+      .set(subtaskData)
+      .where(eq(subtasks.id, id))
+      .returning();
+    return subtask;
+  }
+
+  async getAllAchievements(): Promise<Achievement[]> {
+    return await db.select().from(achievements);
   }
 }
