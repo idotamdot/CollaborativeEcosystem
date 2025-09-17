@@ -17,10 +17,14 @@ import {
   Clock,
   Calendar,
   Car,
-  Book
+  Book,
+  User,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/use-auth';
 import { 
   Sheet,
   SheetContent,
@@ -32,6 +36,7 @@ type SidebarItemType = {
   path: string;
   icon: React.ReactNode;
   submenu?: { title: string; path: string }[];
+  auth?: boolean;
 };
 
 const sidebarItems: SidebarItemType[] = [
@@ -39,6 +44,12 @@ const sidebarItems: SidebarItemType[] = [
     title: 'Home',
     path: '/',
     icon: <Home className="h-5 w-5" />,
+  },
+  {
+    title: 'Profile',
+    path: '/profile',
+    icon: <User className="h-5 w-5" />,
+    auth: true,
   },
   {
     title: 'How It Works',
@@ -121,6 +132,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ className }: SidebarProps) => {
+  const { user, logout, isLoading } = useAuth();
   const [location] = useLocation();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const isMobile = useIsMobile();
@@ -135,89 +147,115 @@ const Sidebar = ({ className }: SidebarProps) => {
   
   const isActive = (path: string) => location === path;
   
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b">
-        <Link href="/">
-          <div className="flex items-center space-x-2">
-            <Leaf className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-400">
-              Eco-Collective
-            </span>
-          </div>
-        </Link>
-      </div>
-      
-      <div className="flex-1 py-6 px-4 overflow-auto">
-        <ul className="space-y-2">
-          {sidebarItems.map((item) => (
-            <li key={item.title}>
-              {item.submenu ? (
-                <div className="space-y-1">
-                  <button
-                    onClick={() => toggleSubmenu(item.title)}
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium",
-                      isActive(item.path) ? "bg-blue-50 text-blue-600" : "text-slate-700 hover:bg-slate-100"
+  const SidebarContent = () => {
+    const filteredSidebarItems = sidebarItems.filter(item => !item.auth || (item.auth && user));
+
+    return (
+      <div className="flex flex-col h-full">
+        <div className="p-4 border-b">
+          <Link href="/">
+            <div className="flex items-center space-x-2">
+              <Leaf className="h-6 w-6 text-primary" />
+              <span className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-400">
+                Eco-Collective
+              </span>
+            </div>
+          </Link>
+        </div>
+
+        <div className="flex-1 py-6 px-4 overflow-auto">
+          <ul className="space-y-2">
+            {filteredSidebarItems.map((item) => (
+              <li key={item.title}>
+                {item.submenu ? (
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => toggleSubmenu(item.title)}
+                      className={cn(
+                        "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium",
+                        isActive(item.path) ? "bg-blue-50 text-blue-600" : "text-slate-700 hover:bg-slate-100"
+                      )}
+                    >
+                      <div className="flex items-center">
+                        {item.icon}
+                        <span className="ml-3">{item.title}</span>
+                      </div>
+                      {expandedItems[item.title] ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+
+                    {expandedItems[item.title] && (
+                      <ul className="ml-6 mt-1 space-y-1">
+                        {item.submenu.map((subItem) => (
+                          <li key={subItem.path}>
+                            <Link href={subItem.path}>
+                              <span
+                                className={cn(
+                                  "block rounded-md px-3 py-2 text-sm font-medium",
+                                  isActive(subItem.path) ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-100"
+                                )}
+                                onClick={isMobile ? () => setIsOpen(false) : undefined}
+                              >
+                                {subItem.title}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     )}
-                  >
-                    <div className="flex items-center">
+                  </div>
+                ) : (
+                  <Link href={item.path}>
+                    <span
+                      className={cn(
+                        "flex items-center rounded-md px-3 py-2 text-sm font-medium",
+                        isActive(item.path) ? "bg-blue-50 text-blue-600" : "text-slate-700 hover:bg-slate-100"
+                      )}
+                      onClick={isMobile ? () => setIsOpen(false) : undefined}
+                    >
                       {item.icon}
                       <span className="ml-3">{item.title}</span>
-                    </div>
-                    {expandedItems[item.title] ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </button>
-                  
-                  {expandedItems[item.title] && (
-                    <ul className="ml-6 mt-1 space-y-1">
-                      {item.submenu.map((subItem) => (
-                        <li key={subItem.path}>
-                          <Link href={subItem.path}>
-                            <span
-                              className={cn(
-                                "block rounded-md px-3 py-2 text-sm font-medium",
-                                isActive(subItem.path) ? "bg-blue-50 text-blue-600" : "text-slate-600 hover:bg-slate-100"
-                              )}
-                              onClick={isMobile ? () => setIsOpen(false) : undefined}
-                            >
-                              {subItem.title}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                <Link href={item.path}>
-                  <span
-                    className={cn(
-                      "flex items-center rounded-md px-3 py-2 text-sm font-medium",
-                      isActive(item.path) ? "bg-blue-50 text-blue-600" : "text-slate-700 hover:bg-slate-100"
-                    )}
-                    onClick={isMobile ? () => setIsOpen(false) : undefined}
-                  >
-                    {item.icon}
-                    <span className="ml-3">{item.title}</span>
-                  </span>
-                </Link>
-              )}
-            </li>
-          ))}
-        </ul>
+                    </span>
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="p-4 border-t">
+          {isLoading ? (
+            <div className="h-10 w-full bg-slate-200 animate-pulse rounded-md" />
+          ) : user ? (
+            <div className="space-y-2">
+              <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600">
+                Create Project
+              </Button>
+              <Button variant="outline" className="w-full" onClick={logout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Link href="/login">
+                <Button variant="outline" className="w-full">
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className="w-full">Sign Up</Button>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-      
-      <div className="p-4 border-t">
-        <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600">
-          Create Project
-        </Button>
-      </div>
-    </div>
-  );
+    );
+  }
   
   if (isMobile) {
     return (

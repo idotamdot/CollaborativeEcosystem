@@ -757,18 +757,26 @@ const LegalTemplates: React.FC = () => {
                           </>
                         )}
                       </Button>
-                      <Button className="bg-blue-600 hover:bg-blue-700">
+                      <a
+                        href={`/forms/${template.id}.${template.fileType}`}
+                        download
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-primary-foreground hover:bg-blue-700 h-10 px-4 py-2"
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Download Template
-                      </Button>
+                      </a>
                     </div>
                   </DialogContent>
                 </Dialog>
                 
-                <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                <a
+                  href={`/forms/${template.id}.${template.fileType}`}
+                  download
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-primary-foreground hover:bg-blue-700 h-10 px-4 py-2 flex-1"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
-                </Button>
+                </a>
               </CardFooter>
             </Card>
           ))
