@@ -7,7 +7,11 @@ import {
   insertMessageSchema, 
   insertProjectApplicationSchema,
   insertResourceSchema,
-  insertAgreementSchema
+  insertAgreementSchema,
+  insertTimeEntrySchema,
+  insertMileageEntrySchema,
+  insertTaskSchema,
+  insertSubtaskSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -570,6 +574,189 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedAgreement);
     } catch (error) {
       res.status(500).json({ message: "Error updating agreement status" });
+    }
+  });
+
+  // ===== Timesheet Routes =====
+
+  // Get all time entries by user
+  app.get("/api/timesheet", async (req: Request, res: Response) => {
+    try {
+      // Assuming you have a way to get the current user's ID, e.g., from session
+      const userId = 1; // Placeholder for the current user's ID
+      const timeEntries = await storage.getTimeEntriesByUser(userId);
+      res.json(timeEntries);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching time entries" });
+    }
+  });
+
+  // Create time entry
+  app.post("/api/timesheet", async (req: Request, res: Response) => {
+    try {
+      const timeEntryData = insertTimeEntrySchema.parse(req.body);
+      const newTimeEntry = await storage.createTimeEntry(timeEntryData);
+      res.status(201).json(newTimeEntry);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid time entry data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating time entry" });
+    }
+  });
+
+  // Delete time entry
+  app.delete("/api/timesheet/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid time entry ID" });
+      }
+
+      const success = await storage.deleteTimeEntry(id);
+      if (!success) {
+        return res.status(404).json({ message: "Time entry not found" });
+      }
+
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting time entry" });
+    }
+  });
+
+  // ===== Mileage Routes =====
+
+  // Get all mileage entries by user
+  app.get("/api/mileage", async (req: Request, res: Response) => {
+    try {
+      // Assuming you have a way to get the current user's ID, e.g., from session
+      const userId = 1; // Placeholder for the current user's ID
+      const mileageEntries = await storage.getMileageEntriesByUser(userId);
+      res.json(mileageEntries);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching mileage entries" });
+    }
+  });
+
+  // Create mileage entry
+  app.post("/api/mileage", async (req: Request, res: Response) => {
+    try {
+      const mileageEntryData = insertMileageEntrySchema.parse(req.body);
+      const newMileageEntry = await storage.createMileageEntry(mileageEntryData);
+      res.status(201).json(newMileageEntry);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid mileage entry data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating mileage entry" });
+    }
+  });
+
+  // Delete mileage entry
+  app.delete("/api/mileage/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid mileage entry ID" });
+      }
+
+      const success = await storage.deleteMileageEntry(id);
+      if (!success) {
+        return res.status(404).json({ message: "Mileage entry not found" });
+      }
+
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting mileage entry" });
+    }
+  });
+
+  // ===== Task Automation Routes =====
+
+  // Get all tasks for a project
+  app.get("/api/projects/:id/tasks", async (req: Request, res: Response) => {
+    try {
+      const projectId = parseInt(req.params.id);
+      if (isNaN(projectId)) {
+        return res.status(400).json({ message: "Invalid project ID" });
+      }
+
+      const tasks = await storage.getTasksByProject(projectId);
+      res.json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching tasks" });
+    }
+  });
+
+  // Create a new task
+  app.post("/api/tasks", async (req: Request, res: Response) => {
+    try {
+      const taskData = insertTaskSchema.parse(req.body);
+      const newTask = await storage.createTask(taskData);
+      res.status(201).json(newTask);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid task data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error creating task" });
+    }
+  });
+
+  // Update a task
+  app.put("/api/tasks/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid task ID" });
+      }
+
+      const taskData = req.body;
+      const updatedTask = await storage.updateTask(id, taskData);
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      res.json(updatedTask);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid task data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error updating task" });
+    }
+  });
+
+  // Update a subtask
+  app.put("/api/tasks/:id/subtasks/:subtaskId", async (req: Request, res: Response) => {
+    try {
+      const subtaskId = parseInt(req.params.subtaskId);
+      if (isNaN(subtaskId)) {
+        return res.status(400).json({ message: "Invalid subtask ID" });
+      }
+
+      const subtaskData = req.body;
+      const updatedSubtask = await storage.updateSubtask(subtaskId, subtaskData);
+
+      if (!updatedSubtask) {
+        return res.status(404).json({ message: "Subtask not found" });
+      }
+
+      res.json(updatedSubtask);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid subtask data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error updating subtask" });
+    }
+  });
+
+  // Get all achievements
+  app.get("/api/achievements", async (_req: Request, res: Response) => {
+    try {
+      const achievements = await storage.getAllAchievements();
+      res.json(achievements);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching achievements" });
     }
   });
 
