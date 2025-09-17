@@ -7,7 +7,9 @@ import {
   contributions, type Contribution, type InsertContribution,
   resources, type Resource, type InsertResource,
   feedback as feedbackTable, type Feedback, type InsertFeedback,
-  agreements, type Agreement, type InsertAgreement
+  agreements, type Agreement, type InsertAgreement,
+  timeEntries, type TimeEntry, type InsertTimeEntry,
+  mileageEntries, type MileageEntry, type InsertMileageEntry
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
@@ -372,5 +374,67 @@ export class DatabaseStorage implements IStorage {
       .where(eq(agreements.id, id))
       .returning();
     return agreement;
+  }
+
+  // Timesheet methods
+  async getTimeEntry(id: number): Promise<TimeEntry | undefined> {
+    const [timeEntry] = await db
+      .select()
+      .from(timeEntries)
+      .where(eq(timeEntries.id, id));
+    return timeEntry;
+  }
+
+  async getTimeEntriesByUser(userId: number): Promise<TimeEntry[]> {
+    return await db
+      .select()
+      .from(timeEntries)
+      .where(eq(timeEntries.userId, userId));
+  }
+
+  async createTimeEntry(insertTimeEntry: InsertTimeEntry): Promise<TimeEntry> {
+    const [timeEntry] = await db
+      .insert(timeEntries)
+      .values(insertTimeEntry)
+      .returning();
+    return timeEntry;
+  }
+
+  async deleteTimeEntry(id: number): Promise<boolean> {
+    const result = await db
+      .delete(timeEntries)
+      .where(eq(timeEntries.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Mileage methods
+  async getMileageEntry(id: number): Promise<MileageEntry | undefined> {
+    const [mileageEntry] = await db
+      .select()
+      .from(mileageEntries)
+      .where(eq(mileageEntries.id, id));
+    return mileageEntry;
+  }
+
+  async getMileageEntriesByUser(userId: number): Promise<MileageEntry[]> {
+    return await db
+      .select()
+      .from(mileageEntries)
+      .where(eq(mileageEntries.userId, userId));
+  }
+
+  async createMileageEntry(insertMileageEntry: InsertMileageEntry): Promise<MileageEntry> {
+    const [mileageEntry] = await db
+      .insert(mileageEntries)
+      .values(insertMileageEntry)
+      .returning();
+    return mileageEntry;
+  }
+
+  async deleteMileageEntry(id: number): Promise<boolean> {
+    const result = await db
+      .delete(mileageEntries)
+      .where(eq(mileageEntries.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 }
