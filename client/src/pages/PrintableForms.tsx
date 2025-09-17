@@ -11,7 +11,6 @@ interface PrintableResource {
   type: 'form' | 'worksheet' | 'legal' | 'workbook';
   fileType: 'pdf' | 'docx' | 'xlsx';
   category: string;
-  downloadUrl: string;
 }
 
 const printableResources: PrintableResource[] = [
@@ -22,7 +21,6 @@ const printableResources: PrintableResource[] = [
     type: 'form',
     fileType: 'pdf',
     category: 'Project Setup',
-    downloadUrl: '#',
   },
   {
     id: 'worksheet1',
@@ -31,7 +29,6 @@ const printableResources: PrintableResource[] = [
     type: 'worksheet',
     fileType: 'xlsx',
     category: 'Assessment',
-    downloadUrl: '#',
   },
   {
     id: 'legal1',
@@ -40,7 +37,6 @@ const printableResources: PrintableResource[] = [
     type: 'legal',
     fileType: 'docx',
     category: 'Agreements',
-    downloadUrl: '#',
   },
   {
     id: 'workbook1',
@@ -49,7 +45,6 @@ const printableResources: PrintableResource[] = [
     type: 'workbook',
     fileType: 'pdf',
     category: 'Education',
-    downloadUrl: '#',
   },
   {
     id: 'form2',
@@ -58,7 +53,6 @@ const printableResources: PrintableResource[] = [
     type: 'form',
     fileType: 'xlsx',
     category: 'Resource Management',
-    downloadUrl: '#',
   },
   {
     id: 'legal2',
@@ -67,7 +61,6 @@ const printableResources: PrintableResource[] = [
     type: 'legal',
     fileType: 'docx',
     category: 'Agreements',
-    downloadUrl: '#',
   },
   {
     id: 'worksheet2',
@@ -76,7 +69,6 @@ const printableResources: PrintableResource[] = [
     type: 'worksheet',
     fileType: 'pdf',
     category: 'Governance',
-    downloadUrl: '#',
   },
   {
     id: 'workbook2',
@@ -85,7 +77,6 @@ const printableResources: PrintableResource[] = [
     type: 'workbook',
     fileType: 'pdf',
     category: 'Business Planning',
-    downloadUrl: '#',
   },
 ];
 
@@ -125,10 +116,14 @@ const ResourceCard = ({ resource }: { resource: PrintableResource }) => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full">
+        <a
+          href={`/forms/${resource.id}.${resource.fileType}`}
+          download
+          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+        >
           <Download className="h-4 w-4 mr-2" />
           Download
-        </Button>
+        </a>
       </CardFooter>
     </Card>
   );

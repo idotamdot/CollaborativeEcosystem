@@ -56,30 +56,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Create user
-  app.post("/api/users", async (req: Request, res: Response) => {
-    try {
-      const userData = insertUserSchema.parse(req.body);
-      
-      // Check if username already exists
-      const existingUser = await storage.getUserByUsername(userData.username);
-      if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-      
-      const newUser = await storage.createUser(userData);
-      
-      // Don't send password in response
-      const { password, ...userWithoutPassword } = newUser;
-      res.status(201).json(userWithoutPassword);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Error creating user" });
-    }
-  });
-  
   // Update user
   app.put("/api/users/:id", async (req: Request, res: Response) => {
     try {
