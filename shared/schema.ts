@@ -280,6 +280,7 @@ export const insertMileageEntrySchema = createInsertSchema(mileageEntries).pick(
   purpose: true,
 });
 
+
 // Tasks table
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
@@ -367,6 +368,7 @@ export type InsertTimeEntry = z.infer<typeof insertTimeEntrySchema>;
 export type MileageEntry = typeof mileageEntries.$inferSelect;
 export type InsertMileageEntry = z.infer<typeof insertMileageEntrySchema>;
 
+
 export type Task = typeof tasks.$inferSelect;
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 
@@ -375,6 +377,7 @@ export type InsertSubtask = z.infer<typeof insertSubtaskSchema>;
 
 export type Achievement = typeof achievements.$inferSelect;
 export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+
 
 // Define relationships between tables
 export const usersRelations = relations(users, ({ many }) => ({
@@ -388,7 +391,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   agreements: many(agreements, { relationName: "userAgreements" }),
   timeEntries: many(timeEntries, { relationName: "userTimeEntries" }),
   mileageEntries: many(mileageEntries, { relationName: "userMileageEntries" }),
+
   tasks: many(tasks, { relationName: "userTasks" }),
+
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -404,7 +409,9 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   agreements: many(agreements, { relationName: "projectAgreements" }),
   timeEntries: many(timeEntries, { relationName: "projectTimeEntries" }),
   mileageEntries: many(mileageEntries, { relationName: "projectMileageEntries" }),
+
   tasks: many(tasks, { relationName: "projectTasks" }),
+
 }));
 
 export const projectApplicationsRelations = relations(projectApplications, ({ one }) => ({
@@ -511,6 +518,7 @@ export const mileageEntriesRelations = relations(mileageEntries, ({ one }) => ({
   }),
 }));
 
+
 export const tasksRelations = relations(tasks, ({ one, many }) => ({
   project: one(projects, {
     fields: [tasks.projectId],
@@ -527,3 +535,4 @@ export const subtasksRelations = relations(subtasks, ({ one }) => ({
     relationName: "taskSubtasks"
   }),
 }));
+

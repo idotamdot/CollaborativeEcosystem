@@ -13,6 +13,7 @@ import {
   tasks, type Task, type InsertTask,
   subtasks, type Subtask, type InsertSubtask,
   achievements, type Achievement, type InsertAchievement
+
 } from "@shared/schema";
 import { DatabaseStorage } from "./database-storage";
 
@@ -91,12 +92,14 @@ export interface IStorage {
   createMileageEntry(mileageEntry: InsertMileageEntry): Promise<MileageEntry>;
   deleteMileageEntry(id: number): Promise<boolean>;
 
+
   // Task Automation methods
   getTasksByProject(projectId: number): Promise<Task[]>;
   createTask(task: InsertTask): Promise<Task>;
   updateTask(id: number, taskData: Partial<InsertTask>): Promise<Task | undefined>;
   updateSubtask(id: number, subtaskData: Partial<InsertSubtask>): Promise<Subtask | undefined>;
   getAllAchievements(): Promise<Achievement[]>;
+
 }
 
 /* Keeping this for reference but we're now using DatabaseStorage

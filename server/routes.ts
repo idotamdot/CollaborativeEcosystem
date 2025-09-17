@@ -12,6 +12,7 @@ import {
   insertMileageEntrySchema,
   insertTaskSchema,
   insertSubtaskSchema
+
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -671,6 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
   // ===== Task Automation Routes =====
 
   // Get all tasks for a project
@@ -759,6 +761,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error fetching achievements" });
     }
   });
+
 
   return httpServer;
 }

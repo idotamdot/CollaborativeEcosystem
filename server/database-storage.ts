@@ -9,10 +9,12 @@ import {
   feedback as feedbackTable, type Feedback, type InsertFeedback,
   agreements, type Agreement, type InsertAgreement,
   timeEntries, type TimeEntry, type InsertTimeEntry,
+ //*feature/timesheet-mileage-tracker
   mileageEntries, type MileageEntry, type InsertMileageEntry,
   tasks, type Task, type InsertTask,
   subtasks, type Subtask, type InsertSubtask,
   achievements, type Achievement
+
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, or, sql } from "drizzle-orm";
@@ -440,6 +442,7 @@ export class DatabaseStorage implements IStorage {
       .where(eq(mileageEntries.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
   }
+//* feature/timesheet-mileage-tracker
 
   // Task Automation methods
   async getTasksByProject(projectId: number): Promise<Task[]> {
